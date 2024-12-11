@@ -1,0 +1,50 @@
+.sidebar {
+    background-color: #000; /* Black background */
+    width: 16rem; /* Set width to 16rem (64px) */
+    height: 100vh; /* Full viewport height */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem;
+}
+
+.nav-item {
+    list-style-type: none;
+    margin-bottom: 1rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: #b71c1c; /* Red background on hover */
+}
+
+.dropdown {
+    margin-top: 0.5rem;
+}
+
+.dropdown-item {
+    list-style-type: none;
+}
+
+.dropdown-link {
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-link:hover {
+    background-color: #ff7961; /* Lighter red on hover */
+}
