@@ -69,7 +69,7 @@ const ResSidebar = () => {
   const dispatch = useDispatch();
 
   const handleChildClick = (path, childId) => {
-    const fullPath = `/cheil${path}`;
+    const fullPath = `/loanApplication${path}`;
 
     // Set the path in the browser's address bar
     window.history.pushState({}, '', fullPath);
@@ -82,14 +82,14 @@ const ResSidebar = () => {
       toast.success(`Dropdown toolkit/${extractedPath} has been selected`,{className:"text-xs"});
       
       // Redirect to the reports path
-      router.push(`/cheil/toolkit/reports`);
+      router.push(`/loanApplication/toolkit/reports`);
     } else {
-      router.push(`/cheil/${path}`);
+      router.push(`/loanApplication/${path}`);
       setActiveChild(childId);
     setShow(false);
     }
   
-    console.log(`/cheil/${path}`);
+    console.log(`/loanApplication/${path}`);
     setActiveChild(childId);
   };
 
@@ -105,7 +105,7 @@ const ResSidebar = () => {
           style={{ fontFamily: "SamsungOne, sans-serif" }}
         >
           <div onClick={()=>{
-   router.push(`/cheil`);
+   router.push(`/loanApplication`);
 }} className=" flex items-center justify-center ">
             <Image priority
               src={logo}
@@ -177,7 +177,7 @@ const ResSidebar = () => {
                             }
                             key={`${parentId}-${childId}`}
                             className={`pl-4 p-2 text-white hover:bg-[#641212] ${
-                              pathname == `/cheil${childNode.path}`
+                              pathname == `/loanApplication${childNode.path}`
                                 ? "bg-[#641212]"
                                 : "bg-[#2b2b2b]"
                             }`}

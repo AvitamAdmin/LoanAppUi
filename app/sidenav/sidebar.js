@@ -155,7 +155,7 @@ const Sidebar = ({ setSidebarVisible }) => {
 
               <div
                 onClick={() => {
-                  router.push("/cheil/user-profile-page");
+                  router.push("/loanApplication/user-profile-page");
                 }}
                 className="flex items-center cursor-pointer hover:cursor-pointer justify-center p-2 w-24  bg-[#222] rounded-md hover:scale-110 transition-all ease-in-out hover:transition-all"
               >
