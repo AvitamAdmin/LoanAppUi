@@ -15,7 +15,7 @@ import {
 
 const media = () => {
   const [token, setToken] = useState("");
-  const [medias, setMedias] = useState([]);
+  const [loanDtoList, setloanDtoList] = useState([]);
   const [sizePerPage, setSizePerPage] = useState(50);
   const [totalRecord, setTotalRecord] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -29,9 +29,9 @@ const media = () => {
   const currentpageNumber = useSelector((state) => state.tasks.pageNumber);
 
   const fields = [
-    { label: "Identifier", value: "identifier" },
-    { label: "File Name", value: "fileName" },
-    { label: "Creator", value: "creator" },
+    { label: "Name", value: "name" },
+    { label: "Loan Score Result", value: "loanScoreResult" },
+    { label: "Loan Status", value: "loanStatus" },
   ];
   const exportDownloadContent = [
     { value: "status", label: "Status" },
@@ -87,14 +87,14 @@ const media = () => {
         body = {
           page:currentpageNumber,
           sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
-          medias: fetchFilterInputs,
+          loanDtoList: fetchFilterInputs,
         };
       }
-      const response = await axios.post(`${api}/admin/media`, body, {
+      const response = await axios.post(`${api}/loans/loan`, body, {
         headers,
       });
 
-      setMedias(response.data.medias || []);
+      setloanDtoList(response.data.loanDtoList || []);
       setTotalRecord(response.data.totalRecords);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -116,13 +116,13 @@ const media = () => {
     }
   };
 
-  const addnewroutepath = "/data/media/add-media";
-  const breadscrums = "Admin > media";
-  const cuurentpagemodelname = "media";
+  const addnewroutepath = "/loans/loan/add-loan";
+  const breadscrums = "Admin > loan";
+  const cuurentpagemodelname = "loan";
   const aresuremodal = "delete this items?";
   const aresuremodaltype = "Delete";
   const apiroutepath = "media";
-  const deleteKeyField = "medias";
+  const deleteKeyField = "loanDtoList";
 
   const startRecord = currentpageNumber * sizePerPage + 1;
   const endRecord = Math.min(startRecord + sizePerPage - 1, totalRecord);
@@ -135,7 +135,7 @@ const media = () => {
         breadscrums={breadscrums}
         addnewroutepath={addnewroutepath}
         fields={fields} // Pass the field configuration
-        data={medias}
+        data={loanDtoList}
         currentPage={currentpageNumber}
         sizePerPage={sizePerPage}
         totalPages={totalPages}
