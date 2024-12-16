@@ -110,9 +110,9 @@ const subsidiary = () => {
     }
   };
 
-  const addnewroutepath = "/data/subsidiary/add-subsidiary";
-  const breadscrums = "Admin > subsidiary";
-  const cuurentpagemodelname = "subsidiary";
+  const addnewroutepath = "/loans/loanApplication/add-loanApplication";
+  const breadscrums = "Admin > loanApplication";
+  const cuurentpagemodelname = "loanApplication";
   const aresuremodal = "delete this items?";
   const exportDownloadContent = [
     { value: "status", label: "Status" },
@@ -124,9 +124,9 @@ const subsidiary = () => {
     { value: "identifier", label: "Identifier" },
   ];
   const aresuremodaltype = "Delete";
-  const apiroutepath = "subsidiary";
+  const apiroutepath = "loanApplication";
   const deleteKeyField = "subsidiaries";
-  const editnewroutepath = "/data/subsidiary/edit-subsidiary";
+  const editnewroutepath = "/loans/loanApplication/edit-loanApplication";
 
   const startRecord = currentpageNumber * sizePerPage + 1;
   const endRecord = Math.min(startRecord + sizePerPage - 1, totalRecord);

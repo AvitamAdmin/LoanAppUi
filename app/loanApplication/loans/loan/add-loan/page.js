@@ -1,32 +1,29 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { FaMinus, FaPlus } from "react-icons/fa";
+import { Autocomplete, TextField } from "@mui/material";
 import AddNewPageButtons from "@/app/src/components/AddNewPageButtons/AddNewPageButtons";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { api } from "@/envfile/api";
 import { getCookie } from "cookies-next";
-import Lottie from "react-lottie";
-import * as animationData from "../../../../../assests/uploadaminamtion.json";
+import { api } from "@/envfile/api";
 import toast, { Toaster } from "react-hot-toast";
 
-const Addmedia = () => {
-  const [params, setParams] = useState([]);
-  const fileInputRef = useRef(null);
+const Addloan = () => {
   const [token, setToken] = useState("");
-  const [email, setEmail] = useState("");
+  const [ButtonActive, setButtonActive] = useState(false);
+  const [EnableGenerator, setenableGenerator] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const [email, setEmail] = useState("");
+
+  const [params, setParams] = useState([]);
 
   const [formValues, setFormValues] = useState({
     identifier: "",
+    name: "",
   });
-  useEffect(() => {
-    const storedEmail = localStorage.getItem("username");
-    if (storedEmail) {
-      setEmail(storedEmail);
-    }
-  }, []);
   useEffect(() => {
     const jwtToken = getCookie("jwtToken");
     if (jwtToken) {
@@ -34,148 +31,155 @@ const Addmedia = () => {
     }
   }, []);
 
-  const handleFileInputClick = () => {
-    fileInputRef.current.click();
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("username");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+  }, []);
+
+
+
+  // Handle change for form inputs
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+    setFormErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
   };
-  const [selectedFile, setSelectedFile] = useState(null);
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-    console.log("Selected file:", file);
-  };
+
+  const [formErrors, setFormErrors] = useState({
+    identifier: false,
+    name: false,
+   
+  });
 
   const handleSaveClick = async () => {
-    if (!selectedFile) {
-      console.error("No file selected!");
-      return;
-    }
+    const errors = {
+      identifier: !formValues.identifier,
+      name: !formValues.name,
+     
+    };
 
-    // Validate file format (allow CSV, XLSX, PDF, JPEG, PNG)
-    const allowedFormats = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "text/csv",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // XLSX format
-    ];
-
-    if (!allowedFormats.includes(selectedFile.type)) {
-      console.error("Unsupported file format.");
-      // toast.error("Unsupported file format."); // Optional user notification
-      return;
-    }
-
+    setFormErrors(errors);
+   
+   
     try {
-      setLoading(true); // Start loading state
-
-      // Create a FormData object
-      const formData = new FormData();
-      formData.append("file", selectedFile); // Ensure 'file' matches backend's field name
-
-      const headers = {
-        Authorization: `Bearer ${token}`, // Token for authorization
-        "Content-Type": "multipart/form-data",
+      const headers = { Authorization: `Bearer ${token}` };
+      const body = {
+        roleDtoList: [
+          {
+            identifier: formValues.identifier,
+            name: formValues.name,
+            status: ButtonActive, 
+            
+          },
+        ],
       };
+console.log(token,"token");
 
+      console.log(body, "req body from role");
       console.log(token, "token");
-      console.log(selectedFile, "selectedFile");
 
-      // Make the POST request
-      const response = await axios.post(`${api}/admin/media/edit`, formData, {
-        headers,
-      });
-
-      console.log(response.data, "response from API");
+      const response = await axios.post(
+        `${api}/admin/role/edit`,
+        body,
+        { headers }
+      );
 
       if (response.data.success === true) {
         toast.success(`${response.data.message}`, { className: "text-sm" });
         setTimeout(() => {
-          router.push("/cheil/data/media");
+          router.push("/cheil/admin/role");
         }, 2000);
       } else if (response.data.success === false) {
-        // Corrected "else" to "else if"
+      
         toast.error(`${response.data.message}`, { className: "text-sm" });
       } else {
-        // Fallback case
+        
         toast.error(`${response.data.message}`, { className: "text-sm" });
       }
+      console.log(response.data, "response from api");
     } catch (err) {
-      console.error("Error uploading media:", err);
-      setError("Error fetching media data"); // Optional: Display user-friendly error
+      setError("Error fetching role data");
     } finally {
-      setLoading(false); // Stop loading spinner
+      setLoading(false);
     }
   };
-
-  const breadscrums = "Admin > media";
+  const breadscrums = "Loans > Loan";
   const pagename = "Add New";
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
+
+  const [addnewpagebtn, setaddnewpagebtn] = useState(true);
 
   return (
     <AddNewPageButtons
+      setshow={addnewpagebtn}
       pagename={pagename}
       email={email}
       breadscrums={breadscrums}
       handleSaveClick={handleSaveClick}
     >
       <div
-        className="flex flex-col w-full p-4 min-h-screen gap-5"
+        className="flex flex-col w-full p-3 min-h-screen gap-5"
         style={{ fontFamily: "SamsungOne, sans-serif" }}
       >
         <Toaster />
-        <div className="flex flex-col bg-gray-200 ">
-          <div className="bg-white relative flex flex-col gap-5  rounded-md shadow-md">
-            <div className="flex flex-col w-full gap-4  items-center justify-center  h-44">
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
+        <div className="flex flex-col bg-gray-200 rounded-md shadow ">
+          <div className="bg-white p-4 rounded-md shadow-md">
+            <div className="grid grid-cols-3 gap-5 mb-4">
+              <TextField
+                required
+                label="Enter Identifier"
+                variant="standard"
+                fullWidth
+                className="text-xs w-full"
+                name="identifier"
+                error={formErrors.identifier}
+                value={formValues.identifier}
+                onChange={handleInputChange}
               />
+              <TextField
+                required
+                label="Name"
+                variant="standard"
+                fullWidth
+                className="text-xs w-full"
+                name="name"
+                error={formErrors.name}
+                value={formValues.name}
+                onChange={handleInputChange}
+              />
+              <div className="flex flex-row gap-6 justify-end items-end">
+                
 
-              <div
-                className="flex items-center justify-center mt-4 p-2 rounded-md bg-transparent text-white w-[100%] h-full"
-                onClick={handleFileInputClick}
-              >
-                Choose file
+                <div>
+                  {ButtonActive ? (
+                    <div
+                      onClick={() => setButtonActive(!ButtonActive)}
+                      className="bg-[#1581ed] text-center cursor-pointer  border-2 border-solid border-gray-400  rounded-md text-white text-xs px-2 py-0.5 w-[80px] animate__animated  animate__pulse"
+                    >
+                      Active
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => setButtonActive(!ButtonActive)}
+                      className="bg-[#fff] border-2 border-solid border-[#1581ed] rounded-md text-gray-500 text-center cursor-pointer text-xs px-2 py-0.5 w-[80px] animate__animated  animate__pulse"
+                    >
+                      Inactive
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="absolute  w-full h-44 rounded-md bg-gray-300 justify-center flex-col items-center flex pointer-events-none">
-              <Lottie options={defaultOptions} height={140} width={100} />
-              <div>Upload files here</div>
-
-              {/* {errorname && <div className="text-sm text-red-600 ">{errorname}</div>} */}
-            </div>
-          </div>
-          {selectedFile && (
-            <div className="flex flex-row gap-5 min-h-16  items-center justify-center mt-1">
-              <div className="text-sm text-gray-500">{selectedFile.name}</div>
-            </div>
-          )}
-          <div className="w-full flex flex-row justify-end mt-5">
-            <div
-              onClick={() => setSelectedFile(null)}
-              className={`${
-                selectedFile
-                  ? "cursor-pointer bg-white"
-                  : "cursor-not-allowed bg-gray-300"
-              } text-gray-800 border-2 border-gray-200 rounded-md p-1 text-md w-[100px] text-center cursor-pointer`}
-              style={{ pointerEvents: selectedFile ? "auto" : "none" }} // Disable click if no file
-            >
-              Clear
             </div>
           </div>
         </div>
+
+        
       </div>
     </AddNewPageButtons>
   );
 };
 
-export default Addmedia;
+export default Addloan;

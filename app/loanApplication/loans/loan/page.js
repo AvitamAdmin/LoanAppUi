@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { api } from "@/envfile/api";
 import { getCookie } from "cookies-next";
-import Listingpageformedia from "@/app/src/components/ListingPageComponents/Listingpageformedia";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearAllEditRecordIds,
@@ -12,6 +12,7 @@ import {
   setConfigureListingPageModal,
   setPageNumber,
 } from "@/app/src/Redux/Slice/slice";
+import Listingpage3cols from "@/app/src/components/ListingPageComponents/Listingpage3cols";
 
 const media = () => {
   const [token, setToken] = useState("");
@@ -130,7 +131,7 @@ const media = () => {
   return (
     <div>
       {error && <div className="text-red-500 text-sm">{error}</div>}
-      <Listingpageformedia
+      <Listingpage3cols
         cuurentpagemodelname={cuurentpagemodelname}
         breadscrums={breadscrums}
         addnewroutepath={addnewroutepath}

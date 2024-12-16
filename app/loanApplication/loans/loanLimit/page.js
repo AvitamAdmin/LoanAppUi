@@ -95,7 +95,7 @@ const LoanLimit = () => {
     setSizePerPage(selectedSize === "all" ? totalRecord : parseInt(selectedSize));
   };
 
-  const addNewRoutePath = "/loans/loanLimit/add-loanLimit";
+  const addnewroutepath = "/loans/loanLimit/add-loanLimit";
   const breadcrumbs = "Admin > Loan Limit";
   const currentModelName = "loanLimit";
   const areYouSureModal = "Delete this item?";
@@ -118,7 +118,7 @@ const LoanLimit = () => {
       <Listingpage3cols
         currentPageModelName={currentModelName}
         breadcrumbs={breadcrumbs}
-        addNewRoutePath={addNewRoutePath}
+        addnewroutepath={addnewroutepath}
         fields={fields}
         data={loanLimit}
         currentPage={currentPageNumber}

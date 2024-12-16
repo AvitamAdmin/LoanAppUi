@@ -9,7 +9,7 @@ import { getCookie } from "cookies-next";
 import { api } from "@/envfile/api";
 import toast, { Toaster } from "react-hot-toast";
 
-const AddDataRelation = () => {
+const AddRole = () => {
   const [token, setToken] = useState("");
   const [ButtonActive, setButtonActive] = useState(false);
   const [EnableGenerator, setenableGenerator] = useState(false);
@@ -182,4 +182,4 @@ console.log(token,"token");
   );
 };
 
-export default AddDataRelation;
+export default AddRole;

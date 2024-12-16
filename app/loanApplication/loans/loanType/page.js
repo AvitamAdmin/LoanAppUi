@@ -95,7 +95,7 @@ const LoanType = () => {
     setSizePerPage(selectedSize === "all" ? totalRecord : parseInt(selectedSize, 10));
   };
 
-  const addNewRoutePath = "/loans/loanType/add-loanType";
+  const addnewroutepath = "/loans/loanType/add-loanType";
   const breadcrumbs = "Admin > Loan Type";
   const currentPageModelName = "loanType";
   const areSureModal = "delete this item?";
@@ -119,7 +119,7 @@ const LoanType = () => {
       <Listingpage3cols
         currentPageModelName={currentPageModelName}
         breadcrumbs={breadcrumbs}
-        addNewRoutePath={addNewRoutePath}
+        addnewroutepath={addnewroutepath}
         fields={fields}
         data={loanTypes}
         currentPage={currentPageNumber}
