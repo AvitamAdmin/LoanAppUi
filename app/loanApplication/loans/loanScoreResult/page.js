@@ -13,20 +13,21 @@ import {
   setPageNumber,
 } from "@/app/src/Redux/Slice/slice";
 
-const loanScoreResult = () => {
+const LoanScoreResult = () => {
   const [token, setToken] = useState("");
-  const [loanScoreResult, setloanScoreResult] = useState([]);
+  const [loanScoreResult, setLoanScoreResult] = useState([]);
   const [sizePerPage, setSizePerPage] = useState(50);
   const [totalRecord, setTotalRecord] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const fetchFilterInputs = useSelector(
-    (state) => state.tasks.fetchFilterInput
-  );
-  const dispatch = useDispatch();
-  const deleteStatus = useSelector((state) => state.tasks.deleteStatus);
+
+  const fetchFilterInputs = useSelector((state) => state.tasks.fetchFilterInput);
+  const advanceSearchInputs = useSelector((state) => state.tasks.advanceSearch);
   const currentpageNumber = useSelector((state) => state.tasks.pageNumber);
+  const deleteStatus = useSelector((state) => state.tasks.deleteStatus);
+  const dispatch = useDispatch();
+
   const fields = [
     { label: "Name", value: "name" },
     { label: "Description", value: "description" },
@@ -39,70 +40,48 @@ const loanScoreResult = () => {
       setToken(jwtToken);
       dispatch(clearAllEditRecordIds());
       dispatch(setConfigureListingPageModal([]));
-      return () => {
-        // dispatch(setAdvanceFilterOperator('and'))
-        dispatch(setAdvanceFilterValue([]));
-      }
     }
-  }, []);
+    return () => {
+      dispatch(setAdvanceFilterValue([]));
+    };
+  }, [dispatch]);
 
   useEffect(() => {
-    if (token) {
-      fetchVariant();
-    }
+    if (token) fetchData();
     if (deleteStatus === "deleted") {
-      fetchVariant();
-      dispatch(resetDeleteStatus()); // Reset deleteStatus after the data is fetched
+      fetchData();
+      dispatch(resetDeleteStatus());
     }
-  }, [token, currentpageNumber, sizePerPage, fetchFilterInputs, deleteStatus]);
-  const advanceSearchInputs = useSelector((state) => state.tasks.advanceSearch);
+  }, [token, currentpageNumber, sizePerPage, fetchFilterInputs, deleteStatus, advanceSearchInputs]);
 
-<<<<<<< HEAD:app/loanApplication/loans/loanScoreResult/page.js
-  const fetchVariant = async () => {
-=======
-  useEffect(() => {
-    if(token) fetchMessages(true);
-  }, [advanceSearchInputs]);
-  const fetchMessages = async (isAdvance = false)  => {
->>>>>>> d94f52ee6dee3781f0f2597d20dcbe3ce4d0c90e:app/cheil/admin/messages/page.js
+  const fetchData = async (isAdvance = false) => {
     setLoading(true);
-    setError(null); // Reset error before fetching
+    setError(null);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-<<<<<<< HEAD:app/loanApplication/loans/loanScoreResult/page.js
-      const body = {
-        page: currentpageNumber,
-        sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
-        // ...(fetchFilterInputs.length === 0 && { page: currentpageNumber }),
-        loanScoreDtos: fetchFilterInputs,
-      };
+      const body = isAdvance
+        ? {
+            page: currentpageNumber,
+            sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
+            ...advanceSearchInputs,
+          }
+        : {
+            page: currentpageNumber,
+            sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
+            loanScoreDtos: fetchFilterInputs,
+          };
+
       const response = await axios.post(`${api}/loans/loanScoreResult`, body, {
-=======
-      var body;
-      if (isAdvance) {
-        body = {
-          page:currentpageNumber,
-          sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
-          ...advanceSearchInputs,
-        };
-      } else {
-        body = {
-          page:currentpageNumber,
-          sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
-          messageResources: fetchFilterInputs,
-        };
-      }
-      const response = await axios.post(`${api}/admin/messages`, body, {
->>>>>>> d94f52ee6dee3781f0f2597d20dcbe3ce4d0c90e:app/cheil/admin/messages/page.js
         headers,
       });
 
-      setloanScoreResult(response.data.loanScoreDtos || []);
-      setTotalRecord(response.data.totalRecords);
-      setTotalPages(response.data.totalPages);
-      setLoading(false);
+      setLoanScoreResult(response.data.loanScoreDtos || []);
+      setTotalRecord(response.data.totalRecords || 0);
+      setTotalPages(response.data.totalPages || 1);
     } catch (err) {
-      setError("Error fetching loanScoreResult data");
+      setError("Error fetching loan score result data.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,23 +92,23 @@ const loanScoreResult = () => {
   const handleSizeChange = (event) => {
     const selectedSize = event.target.value;
     if (selectedSize === "all") {
-      setSizePerPage(totalRecord); // Set to totalRecord to fetch all items
+      setSizePerPage(totalRecord);
     } else {
-      setSizePerPage(parseInt(selectedSize)); // Convert string to number
+      setSizePerPage(parseInt(selectedSize, 10));
     }
   };
 
   const addnewroutepath = "/loans/loanScoreResult/add-loanScoreResult";
-  const breadscrums = "Admin > loanScoreResult";
-  const cuurentpagemodelname = "loanScoreResult";
-  const aresuremodal = "delete this items?";
+  const breadscrums = "Admin > Loan Score Result";
+  const cuurentpagemodelname = "Loan Score Result";
+  const aresuremodal = "Are you sure you want to delete this item?";
   const exportDownloadContent = [
     { value: "status", label: "Status" },
     { value: "node", label: "Node" },
-    { value: "sourceTargetParamMappings", label: "SourceTargetParamMappings" },
-    { value: "dataRelation", label: "DataRelation" },
+    { value: "sourceTargetParamMappings", label: "Source Target Param Mappings" },
+    { value: "dataRelation", label: "Data Relation" },
     { value: "subsidiaries", label: "Subsidiaries" },
-    { value: "shortDescription", label: "ShortDescription" },
+    { value: "shortDescription", label: "Short Description" },
     { value: "identifier", label: "Identifier" },
   ];
   const aresuremodaltype = "Delete";
@@ -137,7 +116,7 @@ const loanScoreResult = () => {
   const deleteKeyField = "loanScoreDtos";
   const editnewroutepath = "/loans/loanScoreResult/edit-loanScoreResult";
 
-  const startRecord = currentpageNumber * sizePerPage + 1;
+  const startRecord = (currentpageNumber - 1) * sizePerPage + 1;
   const endRecord = Math.min(startRecord + sizePerPage - 1, totalRecord);
 
   return (
@@ -147,7 +126,7 @@ const loanScoreResult = () => {
         cuurentpagemodelname={cuurentpagemodelname}
         breadscrums={breadscrums}
         addnewroutepath={addnewroutepath}
-        fields={fields} // Pass the field configuration
+        fields={fields}
         data={loanScoreResult}
         currentPage={currentpageNumber}
         sizePerPage={sizePerPage}
@@ -156,8 +135,8 @@ const loanScoreResult = () => {
         onPageChange={handlePageChange}
         onSizeChange={handleSizeChange}
         loading={loading}
-        startRecord={startRecord} // Pass calculated startRecord
-        endRecord={endRecord} // Pass calculated endRecord
+        startRecord={startRecord}
+        endRecord={endRecord}
         aresuremodal={aresuremodal}
         aresuremodaltype={aresuremodaltype}
         apiroutepath={apiroutepath}
@@ -169,4 +148,4 @@ const loanScoreResult = () => {
   );
 };
 
-export default loanScoreResult;
+export default LoanScoreResult;

@@ -1,28 +1,37 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { api } from "@/envfile/api";
 import { getCookie } from "cookies-next";
 import Listingpage3cols from "@/app/src/components/ListingPageComponents/Listingpage3cols";
 import { useDispatch, useSelector } from "react-redux";
-import { clearAllEditRecordIds, resetDeleteStatus, setAdvanceFilterValue, setConfigureListingPageModal, setPageNumber } from "@/app/src/Redux/Slice/slice";
+import {
+  clearAllEditRecordIds,
+  resetDeleteStatus,
+  setAdvanceFilterValue,
+  setConfigureListingPageModal,
+  setPageNumber,
+} from "@/app/src/Redux/Slice/slice";
 
-const notification = () => {
+const Notification = () => {
   const [token, setToken] = useState("");
-  const [notification, setnotification] = useState([]);
+  const [notification, setNotification] = useState([]);
   const [sizePerPage, setSizePerPage] = useState(50);
   const [totalRecord, setTotalRecord] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const fetchFilterInputs = useSelector(
-    (state) => state.tasks.fetchFilterInput
-  );
+
+  const dispatch = useDispatch();
+  const deleteStatus = useSelector((state) => state.tasks.deleteStatus);
+  const currentpageNumber = useSelector((state) => state.tasks.pageNumber);
+  const fetchFilterInputs = useSelector((state) => state.tasks.fetchFilterInput);
+  const advanceSearchInputs = useSelector((state) => state.tasks.advanceSearch);
+
   const fields = [
-    { label: 'Text', value: 'text' },
-    { label: 'Short Description', value: 'shortDescription' },
-    { label: 'Status', value: 'status' },
-    
+    { label: "Text", value: "text" },
+    { label: "Short Description", value: "shortDescription" },
+    { label: "Status", value: "status" },
   ];
 
   useEffect(() => {
@@ -32,14 +41,10 @@ const notification = () => {
       dispatch(clearAllEditRecordIds());
       dispatch(setConfigureListingPageModal([]));
       return () => {
-        // dispatch(setAdvanceFilterOperator('and'))
         dispatch(setAdvanceFilterValue([]));
-      }
+      };
     }
-  }, []);
-  const dispatch = useDispatch();
-  const deleteStatus = useSelector((state) => state.tasks.deleteStatus);
-  const currentpageNumber = useSelector((state) => state.tasks.pageNumber);
+  }, [dispatch]);
 
   useEffect(() => {
     if (token) {
@@ -47,57 +52,42 @@ const notification = () => {
     }
     if (deleteStatus === "deleted") {
       fetchEnvironment();
-      dispatch(resetDeleteStatus()); // Reset deleteStatus after the data is fetched
+      dispatch(resetDeleteStatus());
     }
-  }, [token, currentpageNumber, sizePerPage, fetchFilterInputs,deleteStatus]);
-
-  const advanceSearchInputs = useSelector((state) => state.tasks.advanceSearch);
+  }, [token, currentpageNumber, sizePerPage, fetchFilterInputs, deleteStatus]);
 
   useEffect(() => {
-    if(token) fetchEnvironment(true);
-  }, [advanceSearchInputs]);
-
+    if (token) fetchEnvironment(true);
+  }, [advanceSearchInputs, token]);
 
   const fetchEnvironment = async (isAdvance = false) => {
     setLoading(true);
-    setError(null); // Reset error before fetching
+    setError(null);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-<<<<<<< HEAD:app/loanApplication/admin/notification/page.js
-      const body = {
-        page: currentpageNumber,
-        sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
-        notificationDtoList: fetchFilterInputs,
-        // ...(fetchFilterInputs.length === 0 && { page: currentpageNumber }),
-      };
+      const body = isAdvance
+        ? {
+            page: currentpageNumber,
+            sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
+            ...advanceSearchInputs,
+          }
+        : {
+            page: currentpageNumber,
+            sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
+            notificationDtoList: fetchFilterInputs,
+          };
+
       const response = await axios.post(`${api}/admin/notification`, body, { headers });
-=======
-      var body;
-      if (isAdvance) {
-        body = {
-          page:currentpageNumber,
-          sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
-          ...advanceSearchInputs,
-        };
-      } else {
-        body = {
-          page:currentpageNumber,
-          sizePerPage: sizePerPage === totalRecord ? totalRecord : sizePerPage,
-          environments: fetchFilterInputs,
-        };
-      }
-      const response = await axios.post(`${api}/admin/environment`, body, { headers });
->>>>>>> d94f52ee6dee3781f0f2597d20dcbe3ce4d0c90e:app/cheil/admin/environment/page.js
-      
-      setnotification(response.data.notificationDtoList || []);
+
+      setNotification(response.data.notificationDtoList || []);
       setTotalRecord(response.data.totalRecords);
       setTotalPages(response.data.totalPages);
-      setLoading(false);
     } catch (err) {
       setError("Error fetching notification data");
-    } 
+    } finally {
+      setLoading(false);
+    }
   };
-  
 
   const handlePageChange = (newPage) => {
     dispatch(setPageNumber(newPage));
@@ -105,44 +95,20 @@ const notification = () => {
 
   const handleSizeChange = (event) => {
     const selectedSize = event.target.value;
-    if (selectedSize === "all") {
-      setSizePerPage(totalRecord); // Set to totalRecord to fetch all items
-    } else {
-      setSizePerPage(parseInt(selectedSize)); // Convert string to number
-    }
+    setSizePerPage(selectedSize === "all" ? totalRecord : parseInt(selectedSize));
   };
-  
 
-  const addnewroutepath = "/admin/notification/add-notification"
-  const breadscrums = "Admin > notification"
-  const cuurentpagemodelname = "notification"
-  const editnewroutepath = "/admin/notification/edit-notification";
-  const aresuremodal = "delete this items?";
-  const exportDownloadContent =  [
-    { value: "status", label: "Status" },
-    { value: "node", label: "Node" },
-    { value: "sourceTargetParamMappings", label: "SourceTargetParamMappings" },
-    { value: "dataRelation", label: "DataRelation" },
-    { value: "subsidiaries", label: "Subsidiaries" },
-    { value: "shortDescription", label: "ShortDescription" },
-    { value: "text", label: "text" }
-  ];  const aresuremodaltype = "Delete";
-  const apiroutepath = "notification";
-  const deleteKeyField = "notificationDtoList";
-
-
-  // Calculate startRecord and endRecord
-  const startRecord = currentpageNumber * sizePerPage + 1;
+  const startRecord = (currentpageNumber - 1) * sizePerPage + 1;
   const endRecord = Math.min(startRecord + sizePerPage - 1, totalRecord);
 
   return (
     <div>
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <Listingpage3cols
-      cuurentpagemodelname={cuurentpagemodelname}
-      breadscrums={breadscrums}
-      addnewroutepath={addnewroutepath}
-        fields={fields} // Pass the field configuration
+        cuurentpagemodelname="notification"
+        breadscrums="Admin > notification"
+        addnewroutepath="/admin/notification/add-notification"
+        fields={fields}
         data={notification}
         currentPage={currentpageNumber}
         sizePerPage={sizePerPage}
@@ -151,17 +117,25 @@ const notification = () => {
         onPageChange={handlePageChange}
         onSizeChange={handleSizeChange}
         loading={loading}
-        startRecord={startRecord} // Pass calculated startRecord
-        endRecord={endRecord} // Pass calculated endRecord
-        aresuremodal={aresuremodal}
-        aresuremodaltype={aresuremodaltype}
-        editnewroutepath={editnewroutepath}
-        apiroutepath={apiroutepath}
-        exportDownloadContent={exportDownloadContent}        deleteKeyField={deleteKeyField}
+        startRecord={startRecord}
+        endRecord={endRecord}
+        aresuremodal="delete this items?"
+        aresuremodaltype="Delete"
+        editnewroutepath="/admin/notification/edit-notification"
+        apiroutepath="notification"
+        exportDownloadContent={[
+          { value: "status", label: "Status" },
+          { value: "node", label: "Node" },
+          { value: "sourceTargetParamMappings", label: "SourceTargetParamMappings" },
+          { value: "dataRelation", label: "DataRelation" },
+          { value: "subsidiaries", label: "Subsidiaries" },
+          { value: "shortDescription", label: "ShortDescription" },
+          { value: "text", label: "text" },
+        ]}
+        deleteKeyField="notificationDtoList"
       />
     </div>
   );
 };
 
-
-export default notification;
+export default Notification;
